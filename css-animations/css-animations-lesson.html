@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Animations – Interactive Lesson</title>
+    <style>
+        :root {
+            --dist: 220px;
+            --bg: #f6f7fb;
+            --card: #fff;
+            --ink: #1f2430;
+            --muted: #5d6577;
+            --accent: #4f46e5;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 24px;
+            line-height: 1.5;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+        }
+
+        h2 {
+            margin: 0 0 4px;
+            font-size: 1.15rem;
+        }
+
+        h2 span {
+            color: var(--accent);
+        }
+
+        p.note {
+            color: var(--muted);
+            margin: 4px 0 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        pre {
+            background: #1e2230;
+            color: #e6e9f2;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0;
+            font-size: .85rem;
+        }
+
+        .track {
+            background: #e8eaf4;
+            border-radius: 8px;
+            padding: 8px;
+            overflow: hidden;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .row b {
+            width: 90px;
+            flex-shrink: 0;
+            font-weight: 600;
+        }
+
+        .box {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 6px 14px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            font-size: .9rem;
+        }
+
+        .bad {
+            color: #b42318;
+            font-weight: 600;
+        }
+
+        .good {
+            color: #067647;
+            font-weight: 600;
+        }
+
+        /* ---------- Shared keyframes ---------- */
+        @keyframes slide {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(var(--dist));
+            }
+        }
+
+        @keyframes colorChange {
+            from {
+                background-color: orange;
+            }
+
+            to {
+                background-color: greenyellow;
+            }
+        }
+
+        @keyframes spin {
+            to {
+                rotate: 360deg;
+            }
+        }
+
+        /* Animations only start when the .run class is added, so Replay works */
+
+        /* 1. Basics */
+        .run .d1 {
+            animation: slide 2s;
+        }
+
+        /* 2. Timing function */
+        .run .t-linear {
+            animation: slide 2s linear;
+        }
+
+        .run .t-ease {
+            animation: slide 2s ease;
+        }
+
+        .run .t-in {
+            animation: slide 2s ease-in;
+        }
+
+        .run .t-out {
+            animation: slide 2s ease-out;
+        }
+
+        .run .t-steps {
+            animation: slide 2s steps(5);
+        }
+
+        /* 3. Delay + iteration count */
+        .run .d3 {
+            animation: slide 1s ease-in-out 1s 3;
+        }
+
+        /* 4. Direction */
+        .run .dir-normal {
+            animation: slide 1.5s ease-in-out 3 normal;
+        }
+
+        .run .dir-alt {
+            animation: slide 1.5s ease-in-out 3 alternate;
+        }
+
+        .run .dir-rev {
+            animation: slide 1.5s ease-in-out 3 reverse;
+        }
+
+        /* 5. Fill mode (both have a 1s delay so the difference is visible) */
+        .run .fill-none {
+            animation: slide 1.5s ease 1s none;
+        }
+
+        .run .fill-fwd {
+            animation: slide 1.5s ease 1s forwards;
+        }
+
+        .run .fill-back {
+            animation: slide 1.5s ease 1s backwards;
+        }
+
+        .fill-back-bg {
+            background: crimson;
+        }
+
+        @keyframes slideColor {
+            from {
+                transform: translateX(60px);
+                background: gold;
+            }
+
+            to {
+                transform: translateX(var(--dist));
+            }
+        }
+
+        .run .fill-back-bg {
+            animation: slideColor 1.5s ease 1s backwards;
+        }
+
+        /* 6. Play state */
+        .d6 {
+            animation: slide 3s linear infinite alternate;
+            animation-play-state: paused;
+        }
+
+        .playing .d6 {
+            animation-play-state: running;
+        }
+
+        /* 7. Multiple animations (different properties, so they don't fight) */
+        .run .d7 {
+            animation: slide 2s ease-in-out, colorChange 2s linear, spin 2s linear;
+            animation-fill-mode: forwards;
+        }
+
+        /* Multi-step keyframes */
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-30px);
+            }
+
+            60% {
+                transform: translateY(0);
+            }
+
+            80% {
+                transform: translateY(-12px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .run .d8 {
+            animation: bounce 1.2s ease-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .box {
+                animation-duration: 0.01s !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>CSS Animations: Interactive Lesson</h1>
+        <p class="note">An animation has two parts: <b>@keyframes</b> (what changes) and the <b>animation properties</b>
+            (how it plays). Press <b>Replay</b> on each demo.</p>
+
+        <!-- 1 -->
+        <section id="s1" class="run">
+            <h2><span>1.</span> @keyframes + name + duration</h2>
+            <p class="note">The minimum you need: a name and a duration.</p>
+            <div class="grid">
+                <pre>@keyframes slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(220px); }
+}
+
+.box {
+  animation-name: slide;
+  animation-duration: 2s;
+}</pre>
+                <div>
+                    <div class="track">
+                        <div class="box d1"></div>
+                    </div><button onclick="replay('s1')">Replay</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 -->
+        <section id="s2" class="run">
+            <h2><span>2.</span> animation-timing-function</h2>
+            <p class="note">Same distance and time, different <i>speed curve</i>. Watch who is fastest at the start and
+                the end.</p>
+            <div class="grid">
+                <pre>animation-timing-function: linear;
+animation-timing-function: ease;      /* default */
+animation-timing-function: ease-in;   /* slow start */
+animation-timing-function: ease-out;  /* slow end */
+animation-timing-function: steps(5);  /* jumpy */</pre>
+                <div class="track">
+                    <div class="row"><b>linear</b>
+                        <div class="box t-linear"></div>
+                    </div>
+                    <div class="row"><b>ease</b>
+                        <div class="box t-ease"></div>
+                    </div>
+                    <div class="row"><b>ease-in</b>
+                        <div class="box t-in"></div>
+                    </div>
+                    <div class="row"><b>ease-out</b>
+                        <div class="box t-out"></div>
+                    </div>
+                    <div class="row"><b>steps(5)</b>
+                        <div class="box t-steps"></div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="replay('s2')">Replay</button>
+        </section>
+
+        <!-- 3 -->
+        <section id="s3" class="run">
+            <h2><span>3.</span> animation-delay + animation-iteration-count</h2>
+            <p class="note">Waits 1s, then plays 3 times. Use <code>infinite</code> to loop forever.</p>
+            <div class="grid">
+                <pre>.box {
+  animation-name: slide;
+  animation-duration: 1s;
+  animation-delay: 1s;
+  animation-iteration-count: 3;
+}</pre>
+                <div>
+                    <div class="track">
+                        <div class="box d3"></div>
+                    </div><button onclick="replay('s3')">Replay</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 -->
+        <section id="s4" class="run">
+            <h2><span>4.</span> animation-direction</h2>
+            <p class="note">With 3 iterations: <code>normal</code> jumps back to the start each time;
+                <code>alternate</code> goes back and forth; <code>reverse</code> plays the keyframes backwards.</p>
+            <div class="grid">
+                <pre>animation-direction: normal;
+animation-direction: alternate;
+animation-direction: reverse;</pre>
+                <div class="track">
+                    <div class="row"><b>normal</b>
+                        <div class="box dir-normal"></div>
+                    </div>
+                    <div class="row"><b>alternate</b>
+                        <div class="box dir-alt"></div>
+                    </div>
+                    <div class="row"><b>reverse</b>
+                        <div class="box dir-rev"></div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="replay('s4')">Replay</button>
+        </section>
+
+        <!-- 5 -->
+        <section id="s5" class="run">
+            <h2><span>5.</span> animation-fill-mode</h2>
+            <p class="note">What does the element look like <i>before</i> the animation starts (during the delay) and
+                <i>after</i> it ends? All rows have a 1s delay.</p>
+            <div class="grid">
+                <pre>animation-fill-mode: none;      /* snaps back */
+animation-fill-mode: forwards;  /* keeps end state */
+animation-fill-mode: backwards; /* uses the first
+   keyframe during the delay */</pre>
+                <div class="track">
+                    <div class="row"><b>none</b>
+                        <div class="box fill-none"></div>
+                    </div>
+                    <div class="row"><b>forwards</b>
+                        <div class="box fill-fwd"></div>
+                    </div>
+                    <div class="row"><b>backwards</b>
+                        <div class="box fill-back-bg"></div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="replay('s5')">Replay</button>
+        </section>
+
+        <!-- 6 -->
+        <section id="s6">
+            <h2><span>6.</span> animation-play-state</h2>
+            <p class="note">Pause and resume an animation from JavaScript by switching this one property.</p>
+            <div class="grid">
+                <pre>.box { animation: slide 3s linear
+              infinite alternate;
+       animation-play-state: paused; }
+.playing .box {
+  animation-play-state: running; }</pre>
+                <div>
+                    <div class="track">
+                        <div class="box d6"></div>
+                    </div>
+                    <button onclick="document.getElementById('s6').classList.toggle('playing')">Play / Pause</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7 -->
+        <section id="s7" class="run">
+            <h2><span>7.</span> Shorthand + multiple animations</h2>
+            <p class="note">Shorthand order:
+                <code>name duration timing-function delay iteration-count direction fill-mode</code>. Separate several
+                animations with commas.</p>
+            <div class="grid">
+                <pre>.box {
+  animation:
+    slide 2s ease-in-out,
+    colorChange 2s linear,
+    spin 2s linear;
+  animation-fill-mode: forwards;
+}</pre>
+                <div>
+                    <div class="track">
+                        <div class="box d7"></div>
+                    </div><button onclick="replay('s7')">Replay</button>
+                </div>
+            </div>
+            <p class="note" style="margin-top:14px">⚠️ Two animations can't both animate <code>transform</code>: the
+                later one wins. Here, <code>spin</code> uses the separate <code>rotate</code> property so it works
+                alongside the slide.</p>
+        </section>
+
+        <!-- 8 -->
+        <section id="s8" class="run">
+            <h2><span>8.</span> Percentage keyframes</h2>
+            <p class="note">Use <code>0%</code> to <code>100%</code> for more than two steps.</p>
+            <div class="grid">
+                <pre>@keyframes bounce {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-30px); }
+  60%  { transform: translateY(0); }
+  80%  { transform: translateY(-12px); }
+  100% { transform: translateY(0); }
+}</pre>
+                <div>
+                    <div class="track" style="padding-top:40px">
+                        <div class="box d8"></div>
+                    </div><button onclick="replay('s8')">Replay</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9 -->
+        <section>
+            <h2><span>9.</span> Common mistakes</h2>
+            <pre>transform: deg(220deg);    <span class="bad">/* ✗ not a function: invalid, ignored */</span>
+transform: rotate(220deg); <span class="good">/* ✓ */</span>
+
+.box { animation: slide 1s; }  <span class="good">/* ✓ needs a duration: default is 0s,
+                                  so nothing visible happens without one */</span></pre>
+            <p class="note" style="margin-top:12px">Also: an empty/auto-sized <code>.box</code> is hard to see. Always
+                give the animated element a width, height and colour.</p>
+        </section>
+    </main>
+
+    <script>
+        // Restart animations: remove the class, force a reflow, add it back.
+        function replay(id) {
+            const el = document.getElementById(id);
+            el.classList.remove('run');
+            void el.offsetWidth;   // forces the browser to recalculate styles
+            el.classList.add('run');
+        }
+    </script>
+</body>
+
+</html>
